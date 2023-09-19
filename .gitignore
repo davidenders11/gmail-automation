@@ -1,0 +1,7 @@
+# Virtual Environment
+/bin
+/lib
+
+# Secrets
+credentials.json
+token.json
