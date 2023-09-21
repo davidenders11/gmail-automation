@@ -6,3 +6,6 @@
 credentials.json
 token.json
 secrets.json
+
+# Overhead
+.DS_Store
