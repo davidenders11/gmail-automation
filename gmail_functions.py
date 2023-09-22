@@ -63,24 +63,6 @@ def get_most_recent_message(service, query):
     return messages[0]["threadId"]
 
 
-# def search_threads(service, query):
-#     result = service.users().threads().list(userId="me", q=query).execute()
-#     threads = []
-#     if "threads" in result:
-#         threads.extend(result["threads"])
-#     while "nextPageToken" in result:
-#         page_token = result["nextPageToken"]
-#         result = (
-#             service.users()
-#             .threads()
-#             .list(userId="me", q=query, pageToken=page_token)
-#             .execute()
-#         )
-#         if "threads" in result:
-#             threads.extend(result["threads"])
-#     return threads
-
-
 def get_thread(service, thread_id):
     """
     Get a thread and print each message including its sender and body
@@ -92,7 +74,6 @@ def get_thread(service, thread_id):
         for header in message["payload"]["headers"]:
             if header["name"] == "From":
                 thread += f"From: {header['value']}"
-        # print(f"\n\nMESSAGE:\n\n{message}")
         for part in message["payload"]["parts"]:
             if part["mimeType"] == "text/plain":
                 content = urlsafe_b64decode(part["body"]["data"]).decode()
@@ -145,12 +126,9 @@ def gmail_create_draft(service, subject, content, me, other):
         encoded_message = base64.urlsafe_b64encode(message.as_bytes()).decode()
 
         create_message = {"message": {"raw": encoded_message}}
-        # pylint: disable=E1101
         draft = (
             service.users().drafts().create(userId="me", body=create_message).execute()
         )
-
-        print(f'Draft id: {draft["id"]}\nDraft message: {draft["message"]}')
 
     except HttpError as error:
         print(f"An error occurred: {error}")
@@ -161,16 +139,14 @@ def gmail_create_draft(service, subject, content, me, other):
 
 def main():
     """
-    Use for testing Gmail API calls
+    For testing Gmail API calls
     """
     me = get_own_email(service)
     other = sys.argv[1]
     creds = auth()
     service = build("gmail", "v1", credentials=creds)
     query = f"from:{other}"
-    # threads = search_threads(service, query)
     last_thread_id = get_most_recent_message(service, query)
-    # print(get_thread(service, last_thread_id))
     print(get_own_email(service))
 
 
