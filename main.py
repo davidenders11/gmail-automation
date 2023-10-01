@@ -14,8 +14,9 @@ from googleapiclient.discovery import build
 parser = argparse.ArgumentParser(
     description="Draft emails to specified recipients.")
 # stores a bool with the value of True if the flag is present, and False if it is not
-parser.add_argument("--reply", action="store_true", help="Reply to the most recent email thread from the specified recipient.")
 parser.add_argument("recipient", type=str, help="The email address of the recipient.")
+parser.add_argument("--reply", action="store_true", help="Reply to the most recent email thread from the specified recipient.")
+parser.add_argument("--verbose", action="store_true", help="Prints logging information to the console.")
 args = parser.parse_args()
 
 def main():
