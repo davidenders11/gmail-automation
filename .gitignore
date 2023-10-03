@@ -9,3 +9,6 @@ secrets.json
 
 # Overhead
 .DS_Store
+
+# Cached Files
+__pycache__/ 

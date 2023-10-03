@@ -1,5 +1,6 @@
 import json
 import openai
+import logging
 
 
 def auth():
@@ -8,9 +9,11 @@ def auth():
     openai.api_key = secrets["openai"]
 
 
-def write_draft(thread, update, myself, other):
+def write_draft(thread, update, myself, other, logger):
     user_content = f"Below is a chain of messages between myself, {myself}, and {other}. I would like to draft a response to {other} based on this interaction and the following update. Please incorporate this new information and formulate a response to {other} that I can send. Only write the body of the response, do not include a subject. Make sure you use the previous thread as context for your response. \n\nPAST MESSAGES: \n###\n{thread}\n###\n\n NEW INFORMATION TO RELAY:\n###\n{update}\n###"
+    logger.info(f'Chat Completion prompt is: "{user_content}"')
     model = "gpt-3.5-turbo-16k"  # Use gpt-4 if you have access
+    logger.info(f'Chat Completion model is: {model}')
     gpt_response = openai.ChatCompletion.create(
         model=model, messages=[{"role": "user", "content": user_content}]
     )

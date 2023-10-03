@@ -23,7 +23,7 @@ SCOPES = [
 ]
 
 
-def auth():
+def auth(logger):
     """
     Authenticates user and saves token.json
     """
@@ -31,21 +31,26 @@ def auth():
     # The file token.json stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first time.
     if os.path.exists("token.json"):
+        logger.info("Reading credentials from existing token.json")
         creds = Credentials.from_authorized_user_file("token.json", SCOPES)
     # If there are no (valid) credentials available, let the user log in.
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
+            logger.info("Credentials expired, sending refresh request")
             creds.refresh(Request())
         else:
+            logger.info("Credentials not found, sending auth request to local server")
             flow = InstalledAppFlow.from_client_secrets_file("credentials.json", SCOPES)
             creds = flow.run_local_server(port=0)
         # Save the credentials for the next run
         with open("token.json", "w") as token:
+            logger.info("Saving credentials to token.json")
             token.write(creds.to_json())
     return creds
 
 
-def get_most_recent_message(service, query):
+def get_most_recent_message(service, query, logger):
+    logger.info(f"Querying Gmail for most recent message with query: {query}")
     result = service.users().messages().list(userId="me", q=query).execute()
     messages = []
     if "messages" in result:
@@ -71,13 +76,17 @@ def get_thread(service, thread_id):
     messages = response["messages"]
     thread = ""
     for message in messages:
+
+        # specify sender in final string
         for header in message["payload"]["headers"]:
             if header["name"] == "From":
                 thread += f"From: {header['value']}"
+        
+        # get messages content and add to string
         for part in message["payload"]["parts"]:
             if part["mimeType"] == "text/plain":
                 content = urlsafe_b64decode(part["body"]["data"]).decode()
-                # remove any lines that start with ">"
+                # remove any lines that start with ">" as these are redundant
                 content = "\n".join(
                     [line for line in content.split("\n") if not line.startswith(">")]
                 )
