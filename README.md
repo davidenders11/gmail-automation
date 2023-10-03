@@ -33,3 +33,8 @@ Another motivation for this app is to practice and refine the incorporation of A
 - Use tiktoken to choose a model based on token count
 - Support drafting new emails without previous interactions
 - Fine-tune the AI model with all past sent emails (in the last year or so) from the user to create a more accurate tone/style
+
+## Documentation
+
+- [OpenAI API](https://platform.openai.com/docs/api-reference/introduction)
+- [Gmail API](https://developers.google.com/gmail/api/reference/rest)
