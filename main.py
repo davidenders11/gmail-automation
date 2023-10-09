@@ -28,7 +28,7 @@ def main():
     logger.info("Retrieved last thread with target recipient")
 
     update = input(f"What would you like to tell {args.recipient}?\n")
-    subject = input(f"\nWhat would you like the subject of the email to be?\n")
+    subject = input(f"\nWhat would you like the subject of the email to be?\n") 
     content = openai.write_draft(thread, update, gmail.me, args.recipient)
     logger.info("Draft has been generated, OpenAI call complete")
 
