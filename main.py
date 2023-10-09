@@ -9,7 +9,7 @@ from gmail_functions import (
     get_most_recent_message,
     gmail_create_draft,
 )
-from openai_functions import write_draft
+from openai_functions import OpenAI
 from googleapiclient.discovery import build
 
 parser = argparse.ArgumentParser(
@@ -28,9 +28,8 @@ logger = logging.getLogger(__name__)
 def main():
     creds = gmail_functions.auth(logger)
     logger.info("Completed Gmail Authentication flow")
-
-    openai_functions.auth()
-    logger.info("Completed OpenAI authentication flow")
+    
+    openai = OpenAI(logger)
 
     service = build("gmail", "v1", credentials=creds)
     logger.info("Built Gmail endpoint service")
@@ -45,7 +44,7 @@ def main():
 
     update = input(f"What would you like to tell {args.recipient}?\n")
     subject = input(f"\nWhat would you like the subject of the email to be?\n")
-    content = write_draft(thread, update, me, args.recipient, logger)
+    content = openai.write_draft(thread, update, me, args.recipient)
     logger.info("Draft has been generated, OpenAI call complete")
 
     gmail_create_draft(service, subject, content, me, args.recipient)

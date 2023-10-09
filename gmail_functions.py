@@ -15,12 +15,12 @@ from googleapiclient.errors import HttpError
 
 from email.message import EmailMessage
 
-
 # If modifying these scopes, delete the file token.json.
 SCOPES = [
     "https://www.googleapis.com/auth/gmail.readonly",
     "https://www.googleapis.com/auth/gmail.compose",
 ]
+
 
 
 def auth(logger):
