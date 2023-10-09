@@ -1,14 +1,7 @@
 import sys
 import argparse
-import gmail_functions
 import logging
-import openai_functions
-from gmail_functions import (
-    get_thread,
-    get_own_email,
-    get_most_recent_message,
-    gmail_create_draft,
-)
+from gmail_functions import Gmail
 from openai_functions import OpenAI
 from googleapiclient.discovery import build
 
@@ -25,29 +18,21 @@ logging.basicConfig(
         format = '%(levelname)s:%(asctime)s:%(message)s')
 logger = logging.getLogger(__name__)
 
-def main():
-    creds = gmail_functions.auth(logger)
-    logger.info("Completed Gmail Authentication flow")
-    
+def main():    
     openai = OpenAI(logger)
-
-    service = build("gmail", "v1", credentials=creds)
-    logger.info("Built Gmail endpoint service")
-
-    me = get_own_email(service)
-    logger.info("Retrieved user email")
+    gmail = Gmail(logger)
 
     query = f"from:{args.recipient}"
-    last_thread_id = get_most_recent_message(service, query, logger)
-    thread = get_thread(service, last_thread_id)
+    last_thread_id = gmail.get_most_recent_message(query)
+    thread = gmail.get_thread(last_thread_id)
     logger.info("Retrieved last thread with target recipient")
 
     update = input(f"What would you like to tell {args.recipient}?\n")
     subject = input(f"\nWhat would you like the subject of the email to be?\n")
-    content = openai.write_draft(thread, update, me, args.recipient)
+    content = openai.write_draft(thread, update, gmail.me, args.recipient)
     logger.info("Draft has been generated, OpenAI call complete")
 
-    gmail_create_draft(service, subject, content, me, args.recipient)
+    gmail.gmail_create_draft(subject, content, args.recipient)
     print(
         f"\nYour draft has been created!\nRecipient: {args.recipient}\nSubject: {subject}\nContent: {content}\n"
     )
