@@ -21,11 +21,10 @@ Another motivation for this app is to practice and refine the incorporation of A
 
 ## Usage
 
-- Run `python3 main.py <EMAIL_ADDRESS>`, replacing with an email address you have corresponded with before and would like to reach out to again
-
-## Testing with Postman
-
-- Follow [this guide](https://blog.postman.com/how-to-access-google-apis-using-oauth-in-postman/)
+- Run `main.py [-h] [--reply] [--verbose] recipient`
+  - the `--reply` flag indicates that you would like to reply to a thread instead of writing a new email
+  - the `--verbose` flag indicates that logging should be displayed
+  - the `recipient` argument is the email address of your intended recipient
 
 ## Extensions
 
