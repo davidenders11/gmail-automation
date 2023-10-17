@@ -18,23 +18,28 @@ logging.basicConfig(
         format = '%(levelname)s:%(asctime)s:%(message)s')
 logger = logging.getLogger(__name__)
 
-def main():    
+def main():
+    # initialize Gmail and OpenAI classes
     openai = OpenAI(logger)
     gmail = Gmail(logger)
 
+    # get the most recent email thread from the specified recipient
     query = f"from:{args.recipient}"
     last_thread_id = gmail.get_most_recent_message(query)
     thread = gmail.get_thread(last_thread_id)
     logger.info("Retrieved last thread with target recipient")
 
+    # get user input
     update = input(f"What would you like to tell {args.recipient}?\n")
     subject = input(f"\nWhat would you like the subject of the email to be?\n") 
+
+    # generate the draft and create it on gmail
     content = openai.write_draft(thread, update, gmail.me, args.recipient)
     logger.info("Draft has been generated, OpenAI call complete")
-
     gmail.gmail_create_draft(subject, content, args.recipient)
     print(
-        f"\nYour draft has been created!\nRecipient: {args.recipient}\nSubject: {subject}\nContent: {content}\n"
+        f"\nYour draft has been created!\nRecipient: {args.recipient}"+
+        "\nSubject: {subject}\nContent: {content}\n"
     )
 
 if __name__ == "__main__":
