@@ -1,8 +1,8 @@
 import sys
 import argparse
 import logging
-from gmail import Gmail
-from openai import OpenAI
+from gmailwrapper import Gmail
+from openaiwrapper import OpenAI
 from googleapiclient.discovery import build
 import pandas as pd
 
