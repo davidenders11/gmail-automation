@@ -32,7 +32,26 @@ def main():
     else: 
         args.recipients = [args.recipients]
 
-    
+    # get user input
+    update = input(f"What new information would you like to tell your recipients?\n")
+    subject = input(f"\nWhat would you like the subject of the email to be?\n") 
+
+    # loop through recipients and create a draft for each
+    for address in args.recipients:
+        # get the most recent email thread from the specified recipient
+        query = f"from:{address}"
+        last_thread_id = gmail.get_most_recent_message(query)
+        thread = gmail.get_thread(last_thread_id)
+        logger.info("Retrieved last thread with target recipients")
+
+        # generate the draft and create it on gmail
+        content = openai.write_draft(thread, update, gmail.me, address)
+        logger.info("Draft has been generated, OpenAI call complete")
+        gmail.gmail_create_draft(subject, content, address)
+        logger.info(
+            f"\nYour draft has been created!\nRecipient: {address}"+
+            "\nSubject: {subject}\nContent: {content}\n"
+        )
 
     # if batch, for loop through dict
         # if reply, get most recent email thread from recipient, read and generate reply
@@ -46,28 +65,12 @@ def main():
         #  get_all_threads(query) which takes a from:email_address query and returns a string containing all threads
             # might need to implement tiktoken for this so we don't run over openai limit
         # modify openai prompt wording to be neutral for reply/new
+        # modify gmail_create_draft to take a reply? boolean
 
     
         
 
-    # get the most recent email thread from the specified recipient
-    query = f"from:{args.recipients}"
-    last_thread_id = gmail.get_most_recent_message(query)
-    thread = gmail.get_thread(last_thread_id)
-    logger.info("Retrieved last thread with target recipients")
 
-    # get user input
-    update = input(f"What would you like to tell {args.recipients}?\n")
-    subject = input(f"\nWhat would you like the subject of the email to be?\n") 
-
-    # generate the draft and create it on gmail
-    content = openai.write_draft(thread, update, gmail.me, args.recipients)
-    logger.info("Draft has been generated, OpenAI call complete")
-    gmail.gmail_create_draft(subject, content, args.recipients)
-    print(
-        f"\nYour draft has been created!\nRecipient: {args.recipients}"+
-        "\nSubject: {subject}\nContent: {content}\n"
-    )
 
 if __name__ == "__main__":
     main()
