@@ -1,14 +1,15 @@
 import sys
 import argparse
 import logging
-from gmail_functions import Gmail
-from openai_functions import OpenAI
+from gmail import Gmail
+from openai import OpenAI
 from googleapiclient.discovery import build
+import pandas as pd
 
 parser = argparse.ArgumentParser(
     description="Draft emails to specified recipients.")
 # stores a bool with the value of True if the flag is present, and False if it is not
-parser.add_argument("recipient", type=str, help="The email address of the recipient.")
+parser.add_argument("recipients", type=str, help="The email address of a single recipient or an Excel file with an 'Email' column of recipients.")
 parser.add_argument("--reply", action="store_true", help="Reply to the most recent email thread from the specified recipient.")
 parser.add_argument("--verbose", action="store_true", help="Prints logging information to the console.")
 args = parser.parse_args()
@@ -23,22 +24,48 @@ def main():
     openai = OpenAI(logger)
     gmail = Gmail(logger)
 
+    # parse args.recipients to a list of email addresses
+    if "xlsx" in args.recipients:
+        workbook = pd.read_excel(args.recipients)
+        workbook.head()
+        args.recipients = [el for el in workbook['Email'] if isinstance(el, str)]
+    else: 
+        args.recipients = [args.recipients]
+
+    
+
+    # if batch, for loop through dict
+        # if reply, get most recent email thread from recipient, read and generate reply
+        # if new, read all past threads from recipient, generate new email
+    # if single recipient
+        # if reply, get most recent email thread from recipient, read and generate reply
+        # if new, generate new email
+
+    # new functions: 
+        #  parse args so that args recipient holds a list of recipients (single element if single recipient)
+        #  get_all_threads(query) which takes a from:email_address query and returns a string containing all threads
+            # might need to implement tiktoken for this so we don't run over openai limit
+        # modify openai prompt wording to be neutral for reply/new
+
+    
+        
+
     # get the most recent email thread from the specified recipient
-    query = f"from:{args.recipient}"
+    query = f"from:{args.recipients}"
     last_thread_id = gmail.get_most_recent_message(query)
     thread = gmail.get_thread(last_thread_id)
-    logger.info("Retrieved last thread with target recipient")
+    logger.info("Retrieved last thread with target recipients")
 
     # get user input
-    update = input(f"What would you like to tell {args.recipient}?\n")
+    update = input(f"What would you like to tell {args.recipients}?\n")
     subject = input(f"\nWhat would you like the subject of the email to be?\n") 
 
     # generate the draft and create it on gmail
-    content = openai.write_draft(thread, update, gmail.me, args.recipient)
+    content = openai.write_draft(thread, update, gmail.me, args.recipients)
     logger.info("Draft has been generated, OpenAI call complete")
-    gmail.gmail_create_draft(subject, content, args.recipient)
+    gmail.gmail_create_draft(subject, content, args.recipients)
     print(
-        f"\nYour draft has been created!\nRecipient: {args.recipient}"+
+        f"\nYour draft has been created!\nRecipient: {args.recipients}"+
         "\nSubject: {subject}\nContent: {content}\n"
     )
 
