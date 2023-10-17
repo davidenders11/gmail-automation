@@ -32,6 +32,7 @@ Another motivation for this app is to practice and refine the incorporation of A
 - Use tiktoken to choose a model based on token count
 - Support drafting new emails without previous interactions
 - Fine-tune the AI model with all past sent emails (in the last year or so) from the user to create a more accurate tone/style
+- Error check for token.json missing and remove the file and try again if so
 
 ## Documentation
 
