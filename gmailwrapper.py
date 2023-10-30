@@ -58,8 +58,16 @@ class Gmail:
                 token.write(creds.to_json())
         self.service = build("gmail", "v1", credentials=creds)
         self.logger.info("Completed Gmail authentication flow")
-
-    def get_thread_from_most_recent_message(self, query):
+    
+    def get_message(self, message_id):
+        '''Get a message and return its payload'''
+        response = self.service.users().messages().get(userId="me", id=message_id).execute()
+        return response["payload"]
+    
+    def get_most_recent_message(self, query):
+        """
+        Get the most recent message matching the query
+        """
         self.logger.info(f"Querying Gmail for most recent message with query: {query}")
         result = self.service.users().messages().list(userId="me", q=query).execute()
         messages = []
@@ -75,7 +83,8 @@ class Gmail:
             )
             if "messages" in result:
                 messages.extend(result["messages"])
-        return messages[0]["threadId"]
+        print(f"most recent message: {self.get_message(messages[0]['id'])}")
+        return messages[0]
 
     def get_thread(self, thread_id):
         """
@@ -118,7 +127,7 @@ class Gmail:
         return thread
     
 
-    def draft(self, subject, content, other, thread_id=None):
+    def draft(self, content, other, subject=None, thread_id=None):
         """Create and insert a draft email.
         Print the returned draft's message and id.
         Returns: Draft object, including draft id and message meta data.
@@ -130,7 +139,7 @@ class Gmail:
 
             message["To"] = other
             message["From"] = self.me
-            message["Subject"] = subject
+            if subject: message["Subject"] = subject
 
             # encoded message
             encoded_message = base64.urlsafe_b64encode(message.as_bytes()).decode()
@@ -138,7 +147,7 @@ class Gmail:
             # add thread id if replying
             if thread_id:
                 body["threadId"] = str(thread_id)
-                print(body)
+
 
             draft = (
                 self.service.users().drafts().create(userId="me", body=body).execute()
@@ -151,47 +160,8 @@ class Gmail:
         return draft
 
 
-
-def gmail_create_draft(service, subject, content, me, other):
-    """Create and insert a draft email.
-    Print the returned draft's message and id.
-    Returns: Draft object, including draft id and message meta data.
-    """
-    try:
-        message = EmailMessage()
-
-        message.set_content(content)
-
-        message["To"] = other
-        message["From"] = me
-        message["Subject"] = subject
-
-        # encoded message
-        encoded_message = base64.urlsafe_b64encode(message.as_bytes()).decode()
-
-        create_message = {"message": {"raw": encoded_message}}
-        draft = (
-            service.users().drafts().create(userId="me", body=create_message).execute()
-        )
-
-    except HttpError as error:
-        print(f"An error occurred: {error}")
-        draft = None
-
-    return draft
-
-
 def main():
-    """
-    For testing Gmail API calls
-    """
-    me = get_own_email(service)
-    other = sys.argv[1]
-    creds = auth()
-    service = build("gmail", "v1", credentials=creds)
-    query = f"from:{other}"
-    last_thread_id = get_most_recent_message(service, query)
-    print(get_own_email(service))
+    pass
 
 
 if __name__ == "__main__":

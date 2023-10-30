@@ -34,13 +34,13 @@ def main():
 
     # get user input
     update = input(f"What new information would you like to tell your recipients?\n")
-    subject = input(f"\nWhat would you like the subject of the email to be?\n") 
+    if not args.reply: subject = input(f"\nWhat would you like the subject of the email to be?\n") 
 
     # loop through recipients and create a draft for each
     for address in args.recipients:
         # get the most recent email thread from the specified recipient
         query = f"from:{address}"
-        last_thread_id = gmail.get_thread_from_most_recent_message(query)
+        last_thread_id = gmail.get_most_recent_message(query)["threadId"]
         thread = gmail.get_thread(last_thread_id)
         logger.info("Retrieved last thread with target recipients")
 
@@ -48,9 +48,9 @@ def main():
         content = openai.write_draft(thread, update, gmail.me, address)
         logger.info("Draft has been generated, OpenAI call complete")
         if args.reply:
-            gmail.draft(subject, content, address, last_thread_id)
+            gmail.draft(content, address, thread_id=last_thread_id)
         else:
-            gmail.draft(subject, content, address)
+            gmail.draft(content, address, subject=subject)
         logger.info(
             f"\nYour draft has been created!\nRecipient: {address}"+
             "\nSubject: {subject}\nContent: {content}\n"

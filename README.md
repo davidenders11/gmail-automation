@@ -33,8 +33,10 @@ Another motivation for this app is to practice and refine the incorporation of A
 - Support drafting new emails without previous interactions
 - Fine-tune the AI model with all past sent emails (in the last year or so) from the user to create a more accurate tone/style
 - Error check for token.json missing and remove the file and try again if so
+- Answer [this question](https://stackoverflow.com/questions/66895957/google-api-with-python-error-when-trying-to-refresh-token) if you fixed the problem
 
 ## Documentation
 
 - [OpenAI API](https://platform.openai.com/docs/api-reference/introduction)
 - [Gmail API](https://developers.google.com/gmail/api/reference/rest)
+- [Gmail Python Library](https://googleapis.github.io/google-api-python-client/docs/dyn/gmail_v1.users.drafts.html#create)
