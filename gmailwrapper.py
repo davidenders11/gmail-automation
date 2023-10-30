@@ -35,7 +35,14 @@ class Gmail:
         # created automatically when the authorization flow completes for the first time.
         if os.path.exists("token.json"):
             self.logger.info("Reading credentials from existing token.json")
-            creds = Credentials.from_authorized_user_file("token.json", SCOPES)
+            try:
+                creds = Credentials.from_authorized_user_file("token.json", SCOPES)
+            except Exception as e:
+                self.logger.error(f"Error reading credentials from token.json: {e}\nRemoving token.json and re-authenticating")
+                os.remove("token.json")
+                creds = None
+                pass
+
         # If there are no (valid) credentials available, let the user log in.
         if not creds or not creds.valid:
             if creds and creds.expired and creds.refresh_token:
@@ -131,6 +138,7 @@ class Gmail:
             # add thread id if replying
             if thread_id:
                 body["threadId"] = str(thread_id)
+                print(body)
 
             draft = (
                 self.service.users().drafts().create(userId="me", body=body).execute()
