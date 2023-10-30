@@ -52,7 +52,7 @@ class Gmail:
         self.service = build("gmail", "v1", credentials=creds)
         self.logger.info("Completed Gmail authentication flow")
 
-    def get_most_recent_message(self, query):
+    def get_thread_from_most_recent_message(self, query):
         self.logger.info(f"Querying Gmail for most recent message with query: {query}")
         result = self.service.users().messages().list(userId="me", q=query).execute()
         messages = []
@@ -111,7 +111,7 @@ class Gmail:
         return thread
     
 
-    def gmail_create_draft(self, subject, content, other):
+    def new_draft(self, subject, content, other):
         """Create and insert a draft email.
         Print the returned draft's message and id.
         Returns: Draft object, including draft id and message meta data.
@@ -128,9 +128,9 @@ class Gmail:
             # encoded message
             encoded_message = base64.urlsafe_b64encode(message.as_bytes()).decode()
 
-            create_message = {"message": {"raw": encoded_message}}
+            body = {"message": {"raw": encoded_message}}
             draft = (
-                self.service.users().drafts().create(userId="me", body=create_message).execute()
+                self.service.users().drafts().create(userId="me", body=body).execute()
             )
 
         except HttpError as error:

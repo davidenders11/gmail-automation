@@ -40,14 +40,14 @@ def main():
     for address in args.recipients:
         # get the most recent email thread from the specified recipient
         query = f"from:{address}"
-        last_thread_id = gmail.get_most_recent_message(query)
+        last_thread_id = gmail.get_thread_from_most_recent_message(query)
         thread = gmail.get_thread(last_thread_id)
         logger.info("Retrieved last thread with target recipients")
 
         # generate the draft and create it on gmail
         content = openai.write_draft(thread, update, gmail.me, address)
         logger.info("Draft has been generated, OpenAI call complete")
-        gmail.gmail_create_draft(subject, content, address)
+        gmail.new_draft(subject, content, address)
         logger.info(
             f"\nYour draft has been created!\nRecipient: {address}"+
             "\nSubject: {subject}\nContent: {content}\n"
