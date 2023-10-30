@@ -40,3 +40,4 @@ Another motivation for this app is to practice and refine the incorporation of A
 - [OpenAI API](https://platform.openai.com/docs/api-reference/introduction)
 - [Gmail API](https://developers.google.com/gmail/api/reference/rest)
 - [Gmail Python Library](https://googleapis.github.io/google-api-python-client/docs/dyn/gmail_v1.users.drafts.html#create)
+- [Email standards](https://datatracker.ietf.org/doc/html/rfc2822#section-2.2)

@@ -127,6 +127,11 @@ class Gmail:
         return thread
     
 
+# If I want draft replies to work, the subject needs to be the same as the original thread, and the thread id needs to be the same as the original thread
+# And I need to also fill in the "In-Reply-To" header and the "References" header to be "Message-ID" of the most recent message in the thread and the "References"
+# header to be the "References" header of the most recent plus the "Message-ID" of the most recent message in the thread
+# I think these are set using the same message["To"] syntax as below, so like message["In-Reply-To"] = message["Message-ID"] of the most recent message in the thread
+# headers and stuff docs here: https://datatracker.ietf.org/doc/html/rfc2822#section-2.2
     def draft(self, content, other, subject=None, thread_id=None):
         """Create and insert a draft email.
         Print the returned draft's message and id.
