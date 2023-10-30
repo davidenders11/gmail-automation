@@ -47,7 +47,10 @@ def main():
         # generate the draft and create it on gmail
         content = openai.write_draft(thread, update, gmail.me, address)
         logger.info("Draft has been generated, OpenAI call complete")
-        gmail.new_draft(subject, content, address)
+        if args.reply:
+            gmail.draft(subject, content, address, last_thread_id)
+        else:
+            gmail.draft(subject, content, address)
         logger.info(
             f"\nYour draft has been created!\nRecipient: {address}"+
             "\nSubject: {subject}\nContent: {content}\n"

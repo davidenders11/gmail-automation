@@ -111,7 +111,7 @@ class Gmail:
         return thread
     
 
-    def new_draft(self, subject, content, other):
+    def draft(self, subject, content, other, thread_id=None):
         """Create and insert a draft email.
         Print the returned draft's message and id.
         Returns: Draft object, including draft id and message meta data.
@@ -127,8 +127,11 @@ class Gmail:
 
             # encoded message
             encoded_message = base64.urlsafe_b64encode(message.as_bytes()).decode()
-
             body = {"message": {"raw": encoded_message}}
+            # add thread id if replying
+            if thread_id:
+                body["threadId"] = str(thread_id)
+
             draft = (
                 self.service.users().drafts().create(userId="me", body=body).execute()
             )
