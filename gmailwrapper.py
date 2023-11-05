@@ -64,7 +64,7 @@ class Gmail:
         response = self.service.users().messages().get(userId="me", id=message_id).execute()
         return response["payload"]
     
-    def get_most_recent_message(self, query):
+    def get_most_recent_message_ids(self, query):
         """
         Get the most recent message matching the query
         """
@@ -83,7 +83,7 @@ class Gmail:
             )
             if "messages" in result:
                 messages.extend(result["messages"])
-        print(f"most recent message: {self.get_message(messages[0]['id'])}")
+
         return messages[0]
 
     def get_thread(self, thread_id):

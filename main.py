@@ -40,7 +40,7 @@ def main():
     for address in args.recipients:
         # get the most recent email thread from the specified recipient
         query = f"from:{address}"
-        last_thread_id = gmail.get_most_recent_message(query)["threadId"]
+        last_thread_id = gmail.get_most_recent_message_ids(query)["threadId"]
         thread = gmail.get_thread(last_thread_id)
         logger.info("Retrieved last thread with target recipients")
 
