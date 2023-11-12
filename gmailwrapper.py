@@ -59,10 +59,25 @@ class Gmail:
         self.service = build("gmail", "v1", credentials=creds)
         self.logger.info("Completed Gmail authentication flow")
     
-    def get_message(self, message_id):
-        '''Get a message and return its payload'''
-        response = self.service.users().messages().get(userId="me", id=message_id).execute()
-        return response["payload"]
+    def get_message_headers(self, message_id):
+        '''Get a message and return its References, In-Reply-To, and Subject headers'''
+        payload = self.service.users().messages().get(userId="me", id=message_id).execute()["payload"]
+        references_value = None
+        in_reply_to_value = None
+        subject = None
+
+        for header in payload["headers"]:
+            if header["name"] == "References":
+                references_value = header["value"]
+            elif header["name"] == "In-Reply-To":
+                in_reply_to_value = header["value"]
+            elif header["name"] == "Subject":
+                subject = header["value"]
+
+        print("References Value:", references_value)
+        print("In-Reply-To Value:", in_reply_to_value)
+        print("Subject:", subject)
+        return 
     
     def get_most_recent_message_ids(self, query):
         """
@@ -132,7 +147,7 @@ class Gmail:
 # header to be the "References" header of the most recent plus the "Message-ID" of the most recent message in the thread
 # I think these are set using the same message["To"] syntax as below, so like message["In-Reply-To"] = message["Message-ID"] of the most recent message in the thread
 # headers and stuff docs here: https://datatracker.ietf.org/doc/html/rfc2822#section-2.2
-    def draft(self, content, other, subject=None, thread_id=None):
+    def draft(self, content, other, subject, thread_id=None):
         """Create and insert a draft email.
         Print the returned draft's message and id.
         Returns: Draft object, including draft id and message meta data.
