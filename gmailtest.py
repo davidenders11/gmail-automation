@@ -15,8 +15,12 @@ gmail = Gmail(logger)
 query = f"from:andrew@xostrucks.com"
 
 # last_thread_id = gmail.get_most_recent_message_ids(query)["threadId"]
-id = gmail.get_most_recent_message_ids(query)["id"]
-payload = gmail.get_message_headers(id)
+ids = gmail.get_most_recent_message_ids(query)
+id = ids["id"]
+threadId = ids["threadId"]
+# print(id, threadId)
+references, reply, subject = gmail.get_message_headers(id)
+print(references, reply, subject)
 
 # Find the "References" and "In-Reply-To" headers and extract their "value" fields
 

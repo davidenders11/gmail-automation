@@ -34,6 +34,10 @@ Another motivation for this app is to practice and refine the incorporation of A
 - Fine-tune the AI model with all past sent emails (in the last year or so) from the user to create a more accurate tone/style
 - Error check for token.json missing and remove the file and try again if so
 - Answer [this question](https://stackoverflow.com/questions/66895957/google-api-with-python-error-when-trying-to-refresh-token) if you fixed the problem
+- new functions:
+  - get_all_threads(query) which takes a from:email_address query and returns a string containing all threads
+    - might need to implement tiktoken for this so we don't run over openai limit
+  - modify openai prompt wording to be neutral for reply/new
 
 ## Documentation
 
