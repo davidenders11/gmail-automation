@@ -78,15 +78,12 @@ class Gmail:
 
         for header in payload["headers"]:
             if header["name"] == "References":
-                references_value = header["value"]
-            elif header["name"] == "In-Reply-To":
+                refs = header["value"]
+            elif header["name"] == "Message-ID":
                 in_reply_to_value = header["value"]
             elif header["name"] == "Subject":
                 subject = header["value"]
-
-        # print("References Value:", references_value)
-        # print("In-Reply-To Value:", in_reply_to_value)
-        # print("Subject:", subject)
+        references_value = refs + " " + in_reply_to_value
         return references_value, in_reply_to_value, subject
 
     def get_most_recent_message_ids(self, query):
@@ -209,12 +206,16 @@ class Gmail:
             message["References"] = references_value
             message["In-Reply-To"] = in_reply_to_value
 
-            print(f"\n\n\nmessage before encoding: {message}\n\n\n")
+            print(f"\n\n\nBefore encoding {message}\n\n\n")
 
             # encoded message
             encoded_message = base64.urlsafe_b64encode(message.as_bytes()).decode()
-            body = {"message": {"raw": encoded_message}}
-            body["threadId"] = str(thread_id)
+            body = {
+                "message": {
+                    "threadId": thread_id,  # The thread id of the main message to reply to
+                    "raw": encoded_message,
+                }
+            }
 
             draft = (
                 self.service.users().drafts().create(userId="me", body=body).execute()
