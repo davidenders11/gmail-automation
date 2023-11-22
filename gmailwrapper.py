@@ -11,7 +11,7 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-
+from datetime import datetime
 from email.message import EmailMessage
 
 
@@ -33,17 +33,18 @@ class Gmail:
         # The file token.json stores the user's access and refresh tokens, and is
         # created automatically when the authorization flow completes for the first time.
         if os.path.exists("token.json"):
-            self.logger.info("Reading credentials from existing token.json")
-            try:
-                creds = Credentials.from_authorized_user_file("token.json", SCOPES)
-            except Exception as e:
-                self.logger.error(
-                    f"Error reading credentials from token.json: {e}\nRemoving token.json and re-authenticating"
+            token = json.load(open("token.json"))
+            expiry = datetime.fromisoformat(token["expiry"])
+            if expiry < datetime.now(expiry.tzinfo):
+                self.logger.info(
+                    "Token expired, removing token.json and re-authenticating"
                 )
+                print("AHHHHH IT WORKED")
                 os.remove("token.json")
                 creds = None
-                pass
-
+            else:
+                self.logger.info("Reading credentials from existing token.json")
+                creds = Credentials.from_authorized_user_file("token.json", SCOPES)
         # If there are no (valid) credentials available, let the user log in.
         if not creds or not creds.valid:
             if creds and creds.expired and creds.refresh_token:
