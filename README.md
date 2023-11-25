@@ -45,3 +45,15 @@ Another motivation for this app is to practice and refine the incorporation of A
 - [Gmail API](https://developers.google.com/gmail/api/reference/rest)
 - [Gmail Python Library](https://developers.google.com/resources/api-libraries/documentation/gmail/v1/python/latest/gmail_v1.users.drafts.html#create)
 - [Email standards](https://datatracker.ietf.org/doc/html/rfc2822#section-2.2)
+
+## Program Flow
+
+- Use argparse to parse options: either read emails from sheet or take single email, and choose reply or new draft
+- OpenAI and Gmail object created
+- CLI prompt asks user for desired content/new information to include in the email (and a subject)
+- `gmail.get_most_recent_message_ids()` gets the threadId and messageId for the most recent interaction with the specified recipient
+- `gmail.get_thread()` compiles all the messages from the most recent thread into a single string and does some cleanup
+- `openai.write_draft()` writes a draft based on the new information, incorporating context from past messages
+- Then the `Gmail` class has two functions for replies: one for new messages and one for replies to threads:
+  - If it's a reply, we first retrieve the necessary headers with `gmail.get_message_headers()` (according to RFC 2822 specifications), then set these headers and create the draft in `gmail.reply_draft()`
+  - Else, pass in content, recipient, and subject to `gmail.new_draft()`

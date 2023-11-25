@@ -21,7 +21,6 @@ SCOPES = [
     "https://www.googleapis.com/auth/gmail.compose",
 ]
 
-
 class Gmail:
     def __init__(self, logger):
         self.logger = logger
