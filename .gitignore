@@ -9,6 +9,7 @@ secrets.json
 
 # Overhead
 .DS_Store
+.vscode
 
 # Cached Files
 __pycache__/

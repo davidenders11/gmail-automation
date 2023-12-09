@@ -21,6 +21,7 @@ SCOPES = [
     "https://www.googleapis.com/auth/gmail.compose",
 ]
 
+
 class Gmail:
     def __init__(self, logger):
         self.logger = logger
@@ -107,6 +108,7 @@ class Gmail:
 
         return messages[0]
 
+    # for some reason key error when new message but not when it's a reply
     def get_thread(self, thread_id):
         """
         Get a thread and print each message including its sender and body
