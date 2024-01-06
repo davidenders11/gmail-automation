@@ -24,20 +24,15 @@ Another motivation for this app is to practice and refine the incorporation of A
 - Run `main.py [-h] [--reply] [--verbose] recipient`
   - the `--reply` flag indicates that you would like to reply to a thread instead of writing a new email
   - the `--verbose` flag indicates that logging should be displayed
-  - the `recipient` argument is the email address of your intended recipient
+  - the `recipient` argument is the email address of your intended recipient OR an excel file containing email addresses
+    - The tool will look for an `Email` column, so make sure that the addresses are all organized in one column with the header `Email`
 
 ## Extensions
 
-- Accept CSV file with many email addresses to batch draft emails
 - Use tiktoken to choose a model based on token count
-- Support drafting new emails without previous interactions
 - Fine-tune the AI model with all past sent emails (in the last year or so) from the user to create a more accurate tone/style
 - Error check for token.json missing and remove the file and try again if so
-- Answer [this question](https://stackoverflow.com/questions/66895957/google-api-with-python-error-when-trying-to-refresh-token) if you fixed the problem
-- new functions:
-  - get_all_threads(query) which takes a from:email_address query and returns a string containing all threads
-    - might need to implement tiktoken for this so we don't run over openai limit
-  - modify openai prompt wording to be neutral for reply/new
+- Make sure still works if there are no previous interactions
 
 ## Documentation
 
@@ -50,8 +45,8 @@ Another motivation for this app is to practice and refine the incorporation of A
 
 - Use argparse to parse options: either read emails from sheet or take single email, and choose reply or new draft
 - OpenAI and Gmail object created
-- CLI prompt asks user for desired content/new information to include in the email (and a subject)
-- `gmail.get_most_recent_message_ids()` gets the threadId and messageId for the most recent interaction with the specified recipient
+- CLI prompt asks user for desired content/new information to include in the email (and a subject if it's a new email)
+- `gmail.get_most_recent_message_ids()` gets the threadId and messageId for the most recent interaction with the specified recipient(s)
 - `gmail.get_thread()` compiles all the messages from the most recent thread into a single string and does some cleanup
 - `openai.write_draft()` writes a draft based on the new information, incorporating context from past messages
 - Then the `Gmail` class has two functions for replies: one for new messages and one for replies to threads:
