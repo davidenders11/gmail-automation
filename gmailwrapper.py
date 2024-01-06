@@ -39,7 +39,6 @@ class Gmail:
                 self.logger.info(
                     "Token expired, removing token.json and re-authenticating"
                 )
-                print("AHHHHH IT WORKED")
                 os.remove("token.json")
                 creds = None
             else:
@@ -109,6 +108,7 @@ class Gmail:
 
         return messages[0]
 
+    # for some reason key error when new message but not when it's a reply
     def get_thread(self, thread_id):
         """
         Get a thread and print each message including its sender and body
@@ -168,13 +168,10 @@ class Gmail:
         """
         try:
             message = EmailMessage()
-
             message.set_content(content)
-
             message["To"] = other
             message["From"] = self.me
-            if subject:
-                message["Subject"] = subject
+            message["Subject"] = subject
 
             # encoded message
             encoded_message = base64.urlsafe_b64encode(message.as_bytes()).decode()
@@ -206,8 +203,6 @@ class Gmail:
             message["Subject"] = subject
             message["References"] = references_value
             message["In-Reply-To"] = in_reply_to_value
-
-            print(f"\n\n\nBefore encoding {message}\n\n\n")
 
             # encoded message
             encoded_message = base64.urlsafe_b64encode(message.as_bytes()).decode()

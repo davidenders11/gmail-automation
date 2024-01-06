@@ -59,7 +59,7 @@ def main():
         logger.info("Retrieved last thread with target recipients")
 
         # generate the draft and create it on gmail
-        content = openai.write_draft(thread, update, gmail.me, address)
+        content = openai.write_draft(thread, update, gmail.me, address, args.reply)
         logger.info("Draft has been generated, OpenAI call complete")
         if args.reply:
             (
